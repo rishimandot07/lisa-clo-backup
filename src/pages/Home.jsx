@@ -49,7 +49,7 @@ export default function Home() {
     <div className="page">
       <header className="header">
         <div className="header-content">
-          <h1 className="logo">Lisa.Clo</h1>
+          <h1 className="logo">Lisa</h1>
         </div>
 
         <nav className="center-nav" aria-label="Categories">
@@ -78,9 +78,9 @@ export default function Home() {
           <button className="icon-btn" type="button" aria-label="Wishlist">
             <FaRegHeart />
           </button>
-          <button className="icon-btn" type="button" aria-label="Add to cart">
+          <Link to="/Cart" className="icon-btn" aria-label="Go to cart">
             <FaShoppingCart />
-          </button>
+          </Link>
           <div className="account-menu">
             <button
               className="icon-btn"
