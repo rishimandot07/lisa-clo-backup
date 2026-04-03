@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import {
   FaChevronLeft,
   FaChevronRight,
-  FaHeart,
   FaRegHeart,
   FaSearch,
   FaShoppingCart,
@@ -28,7 +27,8 @@ export default function Home() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [wishlistedCards, setWishlistedCards] = useState({});
+  // Wishlist on collection cards is disabled for now.
+  // const [wishlistedCards, setWishlistedCards] = useState({});
   // const [burstCards, setBurstCards] = useState({});
 
   const slides = [slideOne, slideTwo, slideThree];
@@ -90,20 +90,21 @@ export default function Home() {
     });
   };
 
-  const toggleWishlist = (cardId) => {
-    const isCurrentlyWishlisted = !!wishlistedCards[cardId];
-
-    if (isCurrentlyWishlisted) {
-      setWishlistedCards((prev) => {
-        const updated = { ...prev };
-        delete updated[cardId];
-        return updated;
-      });
-      return;
-    }
-
-    setWishlistedCards((prev) => ({ ...prev, [cardId]: true }));
-  };
+  // Collection-card wishlist handler is disabled for now.
+  // const toggleWishlist = (cardId) => {
+  //   const isCurrentlyWishlisted = !!wishlistedCards[cardId];
+  //
+  //   if (isCurrentlyWishlisted) {
+  //     setWishlistedCards((prev) => {
+  //       const updated = { ...prev };
+  //       delete updated[cardId];
+  //       return updated;
+  //     });
+  //     return;
+  //   }
+  //
+  //   setWishlistedCards((prev) => ({ ...prev, [cardId]: true }));
+  // };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -217,6 +218,7 @@ export default function Home() {
             <div id="men-collection" className="collection-row">
               {menRepeatedImages.map((image, index) => (
                 <article className="collection-card" key={`men-${index}`}>
+                  {/* Collection-card wishlist button disabled for now.
                   <button
                     type="button"
                     className={`wishlist-btn ${
@@ -225,8 +227,9 @@ export default function Home() {
                     aria-label="Toggle wishlist"
                     onClick={() => toggleWishlist(`men-${index}`)}
                   >
-                    {wishlistedCards[`men-${index}`] ? <FaHeart /> : <FaRegHeart />}
+                    <FaRegHeart />
                   </button>
+                  */}
                   <img src={image} alt={`Men collection ${index + 1}`} />
                 </article>
               ))}
@@ -256,6 +259,7 @@ export default function Home() {
             <div id="women-collection" className="collection-row">
               {womenRepeatedImages.map((image, index) => (
                 <article className="collection-card" key={`women-${index}`}>
+                  {/* Collection-card wishlist button disabled for now.
                   <button
                     type="button"
                     className={`wishlist-btn ${
@@ -264,8 +268,9 @@ export default function Home() {
                     aria-label="Toggle wishlist"
                     onClick={() => toggleWishlist(`women-${index}`)}
                   >
-                    {wishlistedCards[`women-${index}`] ? <FaHeart /> : <FaRegHeart />}
+                    <FaRegHeart />
                   </button>
+                  */}
                   <img src={image} alt={`Women collection ${index + 1}`} />
                 </article>
               ))}
@@ -295,6 +300,7 @@ export default function Home() {
             <div id="genz-collection" className="collection-row">
               {genzRepeatedImages.map((image, index) => (
                 <article className="collection-card" key={`genz-${index}`}>
+                  {/* Collection-card wishlist button disabled for now.
                   <button
                     type="button"
                     className={`wishlist-btn ${
@@ -303,8 +309,9 @@ export default function Home() {
                     aria-label="Toggle wishlist"
                     onClick={() => toggleWishlist(`genz-${index}`)}
                   >
-                    {wishlistedCards[`genz-${index}`] ? <FaHeart /> : <FaRegHeart />}
+                    <FaRegHeart />
                   </button>
+                  */}
                   <img src={image} alt={`Gen Z collection ${index + 1}`} />
                 </article>
               ))}

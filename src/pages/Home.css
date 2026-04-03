@@ -314,6 +314,7 @@
   box-shadow: 0 14px 24px rgba(0, 0, 0, 0.13);
 }
 
+/* Collection-card wishlist styles disabled for now.
 .wishlist-btn {
   position: absolute;
   top: 10px;
@@ -344,6 +345,7 @@
 .wishlist-btn.active svg {
   filter: drop-shadow(0 2px 4px rgba(231, 52, 76, 0.3));
 }
+*/
 
 /* Burst animation disabled for now.
 .wishlist-btn.burst {
