@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Collections from "../components/Collections";
 import { Link } from "react-router-dom";
 import {
   FaChevronLeft,
@@ -204,128 +205,12 @@ export default function Home() {
           </button>
         </section>
 
-        <section className="collection-section">
-          <h2 className="collection-title">Men&apos;s Collection</h2>
-          <div className="collection-shell">
-            <button
-              className="collection-arrow left"
-              type="button"
-              aria-label="Previous items in men's collection"
-              onClick={() => scrollCollection("men-collection", "left")}
-            >
-              <FaChevronLeft />
-            </button>
-            <div id="men-collection" className="collection-row">
-              {menRepeatedImages.map((image, index) => (
-                <article className="collection-card" key={`men-${index}`}>
-                  {/* Collection-card wishlist button disabled for now.
-                  <button
-                    type="button"
-                    className={`wishlist-btn ${
-                      wishlistedCards[`men-${index}`] ? "active" : ""
-                    }`}
-                    aria-label="Toggle wishlist"
-                    onClick={() => toggleWishlist(`men-${index}`)}
-                  >
-                    <FaRegHeart />
-                  </button>
-                  */}
-                  <img src={image} alt={`Men collection ${index + 1}`} />
-                </article>
-              ))}
-            </div>
-            <button
-              className="collection-arrow right"
-              type="button"
-              aria-label="Next items in men's collection"
-              onClick={() => scrollCollection("men-collection", "right")}
-            >
-              <FaChevronRight />
-            </button>
-          </div>
-        </section>
-
-        <section className="collection-section">
-          <h2 className="collection-title">Women&apos;s Collection</h2>
-          <div className="collection-shell">
-            <button
-              className="collection-arrow left"
-              type="button"
-              aria-label="Previous items in women's collection"
-              onClick={() => scrollCollection("women-collection", "left")}
-            >
-              <FaChevronLeft />
-            </button>
-            <div id="women-collection" className="collection-row">
-              {womenRepeatedImages.map((image, index) => (
-                <article className="collection-card" key={`women-${index}`}>
-                  {/* Collection-card wishlist button disabled for now.
-                  <button
-                    type="button"
-                    className={`wishlist-btn ${
-                      wishlistedCards[`women-${index}`] ? "active" : ""
-                    }`}
-                    aria-label="Toggle wishlist"
-                    onClick={() => toggleWishlist(`women-${index}`)}
-                  >
-                    <FaRegHeart />
-                  </button>
-                  */}
-                  <img src={image} alt={`Women collection ${index + 1}`} />
-                </article>
-              ))}
-            </div>
-            <button
-              className="collection-arrow right"
-              type="button"
-              aria-label="Next items in women's collection"
-              onClick={() => scrollCollection("women-collection", "right")}
-            >
-              <FaChevronRight />
-            </button>
-          </div>
-        </section>
-
-        <section className="collection-section">
-          <h2 className="collection-title">Gen Z Collection</h2>
-          <div className="collection-shell">
-            <button
-              className="collection-arrow left"
-              type="button"
-              aria-label="Previous items in Gen Z collection"
-              onClick={() => scrollCollection("genz-collection", "left")}
-            >
-              <FaChevronLeft />
-            </button>
-            <div id="genz-collection" className="collection-row">
-              {genzRepeatedImages.map((image, index) => (
-                <article className="collection-card" key={`genz-${index}`}>
-                  {/* Collection-card wishlist button disabled for now.
-                  <button
-                    type="button"
-                    className={`wishlist-btn ${
-                      wishlistedCards[`genz-${index}`] ? "active" : ""
-                    }`}
-                    aria-label="Toggle wishlist"
-                    onClick={() => toggleWishlist(`genz-${index}`)}
-                  >
-                    <FaRegHeart />
-                  </button>
-                  */}
-                  <img src={image} alt={`Gen Z collection ${index + 1}`} />
-                </article>
-              ))}
-            </div>
-            <button
-              className="collection-arrow right"
-              type="button"
-              aria-label="Next items in Gen Z collection"
-              onClick={() => scrollCollection("genz-collection", "right")}
-            >
-              <FaChevronRight />
-            </button>
-          </div>
-        </section>
+        <Collections
+  menImages={menRepeatedImages}
+  womenImages={womenRepeatedImages}
+  genzImages={genzRepeatedImages}
+  scrollCollection={scrollCollection}
+/>
       </main>
 
       <footer className="footer">

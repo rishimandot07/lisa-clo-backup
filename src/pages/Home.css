@@ -23,7 +23,7 @@
 }
 
 .header {
-  position: sticky;
+  position: relative;
   top: 0;
   z-index: 100;
   display: grid;
@@ -66,7 +66,7 @@
   color: var(--accent);
   border-radius: 999px;
   padding: 8px 14px;
-  font-size: 13px;
+  font-size: 19px;
   letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -262,7 +262,7 @@
 
 .collection-section {
   width: min(1200px, 100%);
-  margin: 28px auto 0;
+  margin: 50px auto;
 }
 
 .collection-title {
@@ -302,18 +302,29 @@
   transition: transform 0.26s ease, box-shadow 0.26s ease;
 }
 
-.collection-card img {
-  display: block;
+
+.card-image img {
   width: 100%;
-  height: clamp(220px, 28vw, 290px);
+  height: 260px;
   object-fit: cover;
+  display: block;
+}
+
+/* Grey strip */
+.card-footer {
+  background: #eeeeee;
+  padding: 12px;
+  text-align: center;
+}
+
+.card-footer p {
+  font-size: 15px;
+  color: #333;
 }
 
 .collection-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.13);
+  transform: translateY(-6px);
 }
-
 /* Collection-card wishlist styles disabled for now.
 .wishlist-btn {
   position: absolute;
@@ -651,4 +662,13 @@
 .account-dropdown a:hover {
   background: #f1e5d5;
   text-decoration: none !important;
+}
+
+.center-nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  gap: 20px;
 }
