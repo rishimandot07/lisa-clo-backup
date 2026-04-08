@@ -27,10 +27,11 @@ body {
 }
 
 /* Logo */
-.auth-logo {
-  font-family: "Great Vibes", cursive;
-  font-size: 34px;
-  color: #8b5e3c;
+.logo {
+  height: 70px;   
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
 }
 
 /* Right icon */

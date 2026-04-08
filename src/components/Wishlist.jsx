@@ -3,6 +3,7 @@ import "./wishlist.css";
 import { Link } from "react-router-dom";
 import { FaTimes, FaHome, FaUserCircle } from "react-icons/fa";
 
+import logo from "../assets/logo.png";
 import outfit1 from "../assets/wishlist/img1.jpg";
 import outfit2 from "../assets/wishlist/img2.jpg";
 import outfit3 from "../assets/wishlist/img3.jpg";
@@ -52,7 +53,9 @@ export default function Wishlist() {
       {/* HEADER */}
       <header className="header">
         <div className="header-content">
-          <h1 className="logo">Lisa</h1>
+          <Link to="/">
+            <img src={logo} alt="Lisa Logo" className="logo" />
+          </Link>
         </div>
 
         <h2 className="wishlist-title">My Wishlist</h2>

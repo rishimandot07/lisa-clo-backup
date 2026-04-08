@@ -42,7 +42,7 @@
 }
 
 .logo {
-  height: 70px;   
+  height: 110px;   
   width: auto;
   object-fit: contain;
   cursor: pointer;
@@ -55,10 +55,72 @@
 }
 
 .center-nav {
+  position: relative;
   justify-self: center;
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+/* NAV ITEM WRAPPER */
+.nav-item {
+  position: relative;
+  display: inline-block;
+}
+
+/* DROPDOWN MENU (MATCHES YOUR THEME) */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;                          /* flush — no gap */
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 8px 0;
+  min-width: 230px;
+
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
+/* Invisible bridge between button and dropdown */
+.dropdown-menu::before {
+  content: "";
+  position: absolute;
+  top: -16px;                         /* covers the gap above */
+  left: 0;
+  right: 0;
+  height: 16px;
+}
+
+.nav-item:hover .dropdown-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* DROPDOWN LINKS */
+.dropdown-menu a {
+  display: block;
+  padding: 10px 16px;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 8px;
+  margin: 2px 8px;
+  transition: all 0.2s ease;
+}
+
+/* HOVER EFFECT (SOFT, PREMIUM) */
+.dropdown-menu a:hover {
+  background: #f1e5d5; /* matches your account dropdown */
+  transform: translateX(4px);
 }
 
 .category-btn {
@@ -67,7 +129,7 @@
   color: var(--accent);
   border-radius: 999px;
   padding: 8px 14px;
-  font-size: 19px;
+  font-size: 17px;
   letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -76,6 +138,7 @@
 .category-btn:hover {
   border-color: var(--accent);
   background: var(--surface);
+  transform: translateY(-1px);
 }
 
 .right-actions {
@@ -262,150 +325,103 @@
 }
 
 .collection-section {
-  width: min(1200px, 100%);
-  margin: 50px auto;
+  width: min(1400px, 100%);
+  margin: 60px auto;
+  padding: 0 10px;
 }
 
 .collection-title {
   text-align: center;
   font-family: "Playfair Display", serif;
   font-size: 28px;
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
 .collection-shell {
   position: relative;
   display: flex;
   align-items: center;
+  padding: 0 30px; /* space for arrows */
 }
 
 .collection-row {
   width: 100%;
   display: flex;
-  gap: 14px;
+  gap: 16px;
+  padding: 12px 4px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 4px 8px;
   scrollbar-width: none;
+  scroll-snap-type: x mandatory;
 }
 
 .collection-row::-webkit-scrollbar {
   display: none;
 }
 
+.collection-link {
+  text-decoration: none;
+  color: inherit;
+  flex: 0 0 clamp(150px, 44vw, 200px);
+  scroll-snap-align: start;
+  min-width: 0;
+}
+
 .collection-card {
-  position: relative;
-  flex: 0 0 clamp(170px, 20vw, 220px);
-  border-radius: 12px;
+  width: 100%;
+  height: 300px;
+  border-radius: 14px;
   overflow: hidden;
   background: var(--surface);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-  transition: transform 0.26s ease, box-shadow 0.26s ease;
-}
-
-
-.card-image img {
-  width: 100%;
-  height: 260px;
-  object-fit: cover;
-  display: block;
-}
-
-/* Grey strip */
-.card-footer {
-  background: #eeeeee;
-  padding: 12px;
-  text-align: center;
-}
-
-.card-footer p {
-  font-size: 15px;
-  color: #333;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .collection-card:hover {
-  transform: translateY(-6px);
-}
-/* Collection-card wishlist styles disabled for now.
-.wishlist-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 8;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  color: #2f2f2f;
-  display: grid;
-  place-items: center;
-  font-size: 16px;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+  transform: translateY(-8px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.14);
 }
 
-.wishlist-btn:hover {
-  transform: scale(1.06);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+.card-image {
+  width: 100%;
+  flex: 1 1 0;       
+  overflow: hidden;
+  background: #ffffff;
 }
 
-.wishlist-btn.active {
-  color: #e7344c;
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center; /* keeps faces/tops visible */
+  display: block;
+  transition: transform 0.4s ease;
 }
 
-.wishlist-btn.active svg {
-  filter: drop-shadow(0 2px 4px rgba(231, 52, 76, 0.3));
-}
-*/
-
-/* Burst animation disabled for now.
-.wishlist-btn.burst {
-  animation: wishlistPop 0.42s ease-out;
+.collection-card:hover .card-image img {
+  transform: scale(1.05); /* subtle zoom on hover */
 }
 
-.wishlist-btn.burst::before,
-.wishlist-btn.burst::after {
-  content: "";
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  pointer-events: none;
+.card-footer {
+  flex: 0 0 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eeeeee;
+  padding: 0 10px;
 }
 
-.wishlist-btn.burst::before {
-  background: radial-gradient(circle, rgba(231, 52, 76, 0.18) 0%, rgba(231, 52, 76, 0) 65%);
-  animation: wishlistRing 0.52s ease-out;
+.card-footer p {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
-.wishlist-btn.burst::after {
-  background:
-    radial-gradient(circle at 20% 30%, #ff663d 2px, transparent 3px),
-    radial-gradient(circle at 80% 26%, #ffa500 2px, transparent 3px),
-    radial-gradient(circle at 28% 78%, #ff3b6a 2px, transparent 3px),
-    radial-gradient(circle at 72% 74%, #ff8e3c 2px, transparent 3px),
-    radial-gradient(circle at 52% 12%, #e7344c 2px, transparent 3px),
-    radial-gradient(circle at 12% 58%, #ff5f45 2px, transparent 3px),
-    radial-gradient(circle at 88% 58%, #ff6f59 2px, transparent 3px);
-  animation: wishlistBurst 0.52s ease-out;
-}
-
-@keyframes wishlistPop {
-  0% { transform: scale(0.7); }
-  55% { transform: scale(1.16); }
-  100% { transform: scale(1); }
-}
-
-@keyframes wishlistRing {
-  0% { transform: scale(0.55); opacity: 0.7; }
-  100% { transform: scale(1.4); opacity: 0; }
-}
-
-@keyframes wishlistBurst {
-  0% { transform: scale(0.68); opacity: 0.85; }
-  100% { transform: scale(1.45); opacity: 0; }
-}
-*/
 
 .collection-arrow {
   position: absolute;
@@ -421,15 +437,17 @@
   place-items: center;
   cursor: pointer;
   transform: translateY(-50%);
+  transition: transform 0.2s ease, filter 0.2s ease;
+  flex-shrink: 0;
 }
 
-.collection-arrow.left {
-  left: -10px;
+.collection-arrow:hover {
+  transform: translateY(-50%) scale(1.08);
+  filter: brightness(1.1);
 }
 
-.collection-arrow.right {
-  right: -10px;
-}
+.collection-arrow.left  { left: -6px; }
+.collection-arrow.right { right: -6px; }
 
 .footer {
   margin-top: 36px;
@@ -568,6 +586,38 @@
 .suggestion-card:hover {
   transform: translateX(4px);
   border-color: var(--accent);
+}
+
+.products-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 cards per row */
+  grid-auto-flow: column;
+  grid-auto-columns: 220px;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 20px;
+  scroll-behavior: smooth;
+}
+
+.product-card {
+  width: 100%;
+  height: 320px; /* FIXED height for consistency */
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card img {
+  width: 100%;
+  height: 220px; /* SAME height for all images */
+  object-fit: cover; /* crops nicely, no distortion */
+}
+
+.product-info {
+  padding: 10px;
+  flex-grow: 1;
 }
 
 .product-thumb {

@@ -16,6 +16,7 @@ import logo from "../assets/logo.png";
 import slideOne from "../assets/homescreen/img1.jpg";
 import slideTwo from "../assets/homescreen/img2.png";
 import slideThree from "../assets/homescreen/img3.png";
+import slideFour from "../assets/homescreen/img4.png";
 import menImageOne from "../assets/Men's Collection/3e3b1e0731bd0214689d5761effc2e5f.jpg";
 import menImageTwo from "../assets/Men's Collection/58cb38ae13a312ac83b8810624550a38.jpg";
 import menImageThree from "../assets/Men's Collection/bc8f2c1f855a92997f7e3f275afaa733.jpg";
@@ -30,11 +31,8 @@ export default function Home() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
-  // Wishlist on collection cards is disabled for now.
-  // const [wishlistedCards, setWishlistedCards] = useState({});
-  // const [burstCards, setBurstCards] = useState({});
 
-  const slides = [slideOne, slideTwo, slideThree];
+  const slides = [slideOne, slideTwo, slideThree,slideFour];
   const menRepeatedImages = [
     menImageOne,
     menImageTwo,
@@ -84,30 +82,19 @@ export default function Home() {
   };
 
   const scrollCollection = (rowId, direction) => {
-    const row = document.getElementById(rowId);
-    if (!row) return;
+  const row = document.getElementById(rowId);
+  if (!row) return;
 
-    row.scrollBy({
-      left: direction === "left" ? -280 : 280,
-      behavior: "smooth",
-    });
-  };
+  const card = row.querySelector(".collection-card");
+  if (!card) return;
 
-  // Collection-card wishlist handler is disabled for now.
-  // const toggleWishlist = (cardId) => {
-  //   const isCurrentlyWishlisted = !!wishlistedCards[cardId];
-  //
-  //   if (isCurrentlyWishlisted) {
-  //     setWishlistedCards((prev) => {
-  //       const updated = { ...prev };
-  //       delete updated[cardId];
-  //       return updated;
-  //     });
-  //     return;
-  //   }
-  //
-  //   setWishlistedCards((prev) => ({ ...prev, [cardId]: true }));
-  // };
+  const cardWidth = card.offsetWidth + 14; // include gap
+
+  row.scrollBy({
+    left: direction === "left" ? -cardWidth : cardWidth,
+    behavior: "smooth",
+  });
+};
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -127,15 +114,38 @@ export default function Home() {
         </div>
 
         <nav className="center-nav" aria-label="Categories">
-          <button className="category-btn" type="button">
-            Men
-          </button>
-          <button className="category-btn" type="button">
-            Women
-          </button>
-          <button className="category-btn" type="button">
-            Gen Z
-          </button>
+          <div className="nav-item">
+            <button className="category-btn">Men</button>
+            <div className="dropdown-menu">
+              <Link to="/men/polo">Polo T-Shirts</Link>
+              <Link to="/men/oversized">Men's Oversized T-Shirts</Link>
+              <Link to="/men/regular">Men's Regular Fit</Link>
+              <Link to="/men/hoodie">Men's Hoddies</Link>
+              <Link to="/men/jeans">Men's Jeans</Link>
+            </div>
+          </div>
+
+          <div className="nav-item">
+            <button className="category-btn">Women</button>
+            <div className="dropdown-menu">
+              <Link to="/women/tshirts">Women's T-Shirts</Link>
+              <Link to="/women/crop-tops">Women's Crop Tops</Link>
+              <Link to="/women/oversized">Women's Oversized T-Shirts</Link>
+              <Link to="/women/hoodies">Women's Hoodies</Link>
+              <Link to="/women/bottoms">Women's Bottoms</Link>
+            </div>
+          </div>
+
+          <div className="nav-item">
+            <button className="category-btn">Gen Z</button>
+              <div className="dropdown-menu">
+                <Link to="/genz/oversized">Oversized T-Shirts</Link>
+                <Link to="/genz/joggers">Joggers</Link>
+                <Link to="/genz/baggy-jeans">Baggy Jeans</Link>
+                <Link to="/genz/hoodies">Hoodies</Link>
+                <Link to="/genz/baggy-shirts">Baggy Shirts</Link>
+              </div>
+          </div>
         </nav>
 
         <nav className="header-actions right-actions">
@@ -210,11 +220,12 @@ export default function Home() {
         </section>
 
         <Collections
-  menImages={menRepeatedImages}
-  womenImages={womenRepeatedImages}
-  genzImages={genzRepeatedImages}
-  scrollCollection={scrollCollection}
-/>
+        menImages={menRepeatedImages}
+        womenImages={womenRepeatedImages}
+        genzImages={genzRepeatedImages}
+        scrollCollection={scrollCollection}
+        />
+      
       </main>
 
       <footer className="footer">

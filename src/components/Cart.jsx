@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
+import logo from "../assets/logo.png";
 import outfit1 from "../assets/cart/img1.jpg";
 import outfit2 from "../assets/cart/img2.jpg";
 import outfit3 from "../assets/cart/img3.jpg";
@@ -49,7 +50,9 @@ export default function CartPage() {
 
       <header className="header">
         <div className="header-content">
-          <h1 className="logo">Lisa</h1>
+          <Link to="/">
+            <img src={logo} alt="Lisa Logo" className="logo" />
+          </Link>
         </div>
 
         <h2 className="cart-title">Your Cart</h2>

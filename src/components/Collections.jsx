@@ -1,5 +1,6 @@
 import React from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function Collections({
   menImages,
@@ -7,32 +8,31 @@ export default function Collections({
   genzImages,
   scrollCollection,
 }) {
-  // 🔥 CATEGORY NAMES
-  const menTitles = [
-    "Men's Gym Oversized",
-    "Acid Washed T-Shirt",
-    "Men's Regular",
-    "Men's Oversized",
-    "Men's Hoodie",
-    "Men's Polo",
+
+  /* ========= CATEGORY CONFIG ========= */
+
+  const menCategories = [
+    { label: "Polo T-Shirts", value: "polo" },
+    { label: "Men's Oversized T-Shirts", value: "men-oversized" },
+    { label: "Men's Regular Fit", value: "regular" },
+    { label: "Men's Hoddies", value: "men-hoodie" },
+    { label: "Men's Jeans", value: "jeans" }
   ];
 
-  const womenTitles = [
-    "Women's Regular",
-    "Women's Oversized",
-    "Women's Sweatshirt",
-    "Women's Hoodie",
-    "Women's Polo",
-    "Women's T-Shirt",
+  const womenCategories = [
+    { label: "Women's T-Shirts", value: "tshirts" },
+    { label: "Women's Crop Tops", value: "crop-top" },
+    { label: "Women's Oversized T-Shirts", value: "women-oversized" },
+    { label: "Women's Hoodies", value: "women-hoodie" },
+    { label: "Women's Bottoms", value: "women-bottom" },
   ];
 
-  const genzTitles = [
-    "GenZ Oversized",
-    "GenZ Streetwear",
-    "GenZ Graphic Tees",
-    "GenZ Hoodies",
-    "GenZ Casual",
-    "GenZ Trendy",
+  const genzCategories = [
+    { label: "Oversized T-Shirts", value: "oversized" },
+    { label: "Joggers", value: "joggers" },
+    { label: "Baggy Jeans", value: "baggy-jeans" },
+    { label: "Hoodies", value: "hoodies" },
+    { label: "Baggy Shirts", value: "baggy-shirts" }
   ];
 
   return (
@@ -50,17 +50,27 @@ export default function Collections({
           </button>
 
           <div id="men-collection" className="collection-row">
-            {menImages.slice(0, 6).map((image, index) => (
-              <article className="collection-card" key={`men-${index}`}>
-  <div className="card-image">
-    <img src={image} alt={menTitles[index]} />
-  </div>
+            {menImages.slice(0, 6).map((image, index) => {
+              const category =
+                menCategories[index % menCategories.length];
 
-  <div className="card-footer">
-    <p>{menTitles[index]}</p>
-  </div>
-</article>
-            ))}
+              return (
+                <Link
+                  to={`/men/${category.value}`}
+                  key={`men-${index}`}
+                  className="collection-link"
+                >
+                  <article className="collection-card">
+                    <div className="card-image">
+                      <img src={image} alt={category.label} />
+                    </div>
+                    <div className="card-footer">
+                      <p>{category.label}</p>
+                    </div>
+                  </article>
+                </Link>
+              );
+            })}
           </div>
 
           <button
@@ -85,18 +95,28 @@ export default function Collections({
           </button>
 
           <div id="women-collection" className="collection-row">
-  {womenImages.slice(0, 6).map((image, index) => (
-    <article className="collection-card" key={`women-${index}`}>
-      <div className="card-image">
-        <img src={image} alt={womenTitles[index]} />
-      </div>
+            {womenImages.slice(0, 6).map((image, index) => {
+              const category =
+                womenCategories[index % womenCategories.length];
 
-      <div className="card-footer">
-        <p>{womenTitles[index]}</p>
-      </div>
-    </article>
-  ))}
-</div>
+              return (
+                <Link
+                  to={`/women/${category.value}`}
+                  key={`women-${index}`}
+                  className="collection-link"
+                >
+                  <article className="collection-card">
+                    <div className="card-image">
+                      <img src={image} alt={category.label} />
+                    </div>
+                    <div className="card-footer">
+                      <p>{category.label}</p>
+                    </div>
+                  </article>
+                </Link>
+              );
+            })}
+          </div>
 
           <button
             className="collection-arrow right"
@@ -120,18 +140,28 @@ export default function Collections({
           </button>
 
           <div id="genz-collection" className="collection-row">
-  {genzImages.slice(0, 6).map((image, index) => (
-    <article className="collection-card" key={`genz-${index}`}>
-      <div className="card-image">
-        <img src={image} alt={genzTitles[index]} />
-      </div>
+            {genzImages.slice(0, 6).map((image, index) => {
+              const category =
+                genzCategories[index % genzCategories.length];
 
-      <div className="card-footer">
-        <p>{genzTitles[index]}</p>
-      </div>
-    </article>
-  ))}
-</div>
+              return (
+                <Link
+                  to={`/genz/${category.value}`}
+                  key={`genz-${index}`}
+                  className="collection-link"
+                >
+                  <article className="collection-card">
+                    <div className="card-image">
+                      <img src={image} alt={category.label} />
+                    </div>
+                    <div className="card-footer">
+                      <p>{category.label}</p>
+                    </div>
+                  </article>
+                </Link>
+              );
+            })}
+          </div>
 
           <button
             className="collection-arrow right"

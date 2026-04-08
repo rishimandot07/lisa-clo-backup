@@ -7,6 +7,7 @@ import {
   FaEyeSlash,
   FaHome
 } from "react-icons/fa";
+import logo from "../assets/logo.png";
 import "./auth.css";
 
 export default function Login() {
@@ -16,7 +17,9 @@ export default function Login() {
     <>
       {/* 🔥 HEADER */}
       <header className="auth-header">
-        <h1 className="auth-logo">Lisa</h1>
+        <Link to="/">
+          <img src={logo} alt="Lisa Logo" className="logo" />
+        </Link>
 
         <div className="auth-header-icons">
           <Link to="/" className="icon-btn">
