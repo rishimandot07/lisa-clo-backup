@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import {
   FaEnvelope,
   FaLock,
@@ -11,6 +11,7 @@ import "./auth.css";
 
 export default function Login() {
   const [show, setShow] = useState(false);
+  const navigate = useNavigate();
 
   // 🔥 NEW STATES
   const [email, setEmail] = useState("");
@@ -36,7 +37,7 @@ export default function Login() {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
-        alert("Login successful ✅");
+        navigate("/");
       } else {
         alert(data.message);
       }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import {
   FaUser,
   FaEnvelope,
@@ -13,11 +13,13 @@ import "./auth.css";
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const navigate = useNavigate();
 
   // 🔥 NEW STATES
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
 
   // 🔥 HANDLE SUBMIT
   const handleSignup = async (e) => {
@@ -36,8 +38,9 @@ export default function Signup() {
         })
       });
 
-      const data = await res.json();
-      alert(data.message);
+     const data = await res.json();
+      console.log(data);
+      navigate("/login");
 
     } catch (error) {
       console.log(error);
