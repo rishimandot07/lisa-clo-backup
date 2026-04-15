@@ -1,5 +1,8 @@
 /*eslint-disable no-undef */
-require("dotenv").config();
+console.log("🔥🔥 THIS IS THE REAL SERVER FILE");
+
+require("dotenv").config({ path: __dirname + "/.env" });
+console.log("ENV CHECK:", process.env.MONGO_URI);
 
 console.log("ENV:", process.env.MONGO_URI);
 const express = require("express");
@@ -9,13 +12,69 @@ const User = require("./models/User");
 const app = express();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
+const Product = require("./models/Product");
 
-app.use(cors());
+console.log("🔥 SERVER FILE LOADED");
+console.log("SERVER STARTED CORRECT FILE");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "backend/uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
+
+app.use(cors({origin:"*"}));
 app.use(express.json());
+app.use("/uploads", express.static("backend/uploads"));
 
 app.get("/", (req, res) => {
   res.send("Backend Running 🚀");
 });
+
+app.post("/api/products", upload.single("image"), async (req, res) => {
+  try {
+    const { name, price, category } = req.body;
+
+    const newProduct = new Product({
+      name,
+      price,
+      image: `http://localhost:8000/uploads/${req.file.filename}`, 
+      category
+    });
+
+    await newProduct.save();
+
+    res.json({ message: "Product added", product: newProduct });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/products", async (req, res) => { 
+  console.log("PRODUCTS ROUTE HIT");
+  const products = await Product.find();
+  res.json(products);
+});
+
+app.post("/api/upload", upload.single("image"), (req, res) => {
+  try {
+    res.json({
+      message: "Image uploaded",
+      imageUrl: `http://localhost:5000/uploads/${req.file.filename}`
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post("/api/auth/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -100,6 +159,8 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log(err));
 
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+ const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("Server running on port", PORT);
 });

@@ -1,3 +1,4 @@
+/*eslint-disable no-undef */
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
@@ -6,7 +7,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true
   },
-  password: String
+  password: String,
+
+  image: String
 });
 
 module.exports = mongoose.model("User", userSchema);

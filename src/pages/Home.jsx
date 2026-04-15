@@ -29,6 +29,7 @@ export default function Home() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [products, setProducts] = useState([]);
   // Wishlist on collection cards is disabled for now.
   // const [wishlistedCards, setWishlistedCards] = useState({});
   // const [burstCards, setBurstCards] = useState({});
@@ -115,6 +116,20 @@ export default function Home() {
 
     return () => clearInterval(timer);
   }, [slides.length]);
+
+useEffect(() => {
+  fetch("http://localhost:8000/api/products")
+    .then(res => res.json())
+    .then(data => {
+      console.log("🔥 Products:", data);
+      setProducts(data);
+    })
+    .catch(err => console.error(err));
+}, []);
+
+const menProducts = products.filter(p => p.category === "men");
+const womenProducts = products.filter(p => p.category === "women");
+const genzProducts = products.filter(p => p.category === "genz");
 
   return (
     <div className="page">
@@ -219,24 +234,22 @@ export default function Home() {
             >
               <FaChevronLeft />
             </button>
-            <div id="men-collection" className="collection-row">
-              {menRepeatedImages.map((image, index) => (
-                <article className="collection-card" key={`men-${index}`}>
-                  {/* Collection-card wishlist button disabled for now.
-                  <button
-                    type="button"
-                    className={`wishlist-btn ${
-                      wishlistedCards[`men-${index}`] ? "active" : ""
-                    }`}
-                    aria-label="Toggle wishlist"
-                    onClick={() => toggleWishlist(`men-${index}`)}
-                  >
-                    <FaRegHeart />
-                  </button>
-                  */}
-                  <img src={image} alt={`Men collection ${index + 1}`} />
-                </article>
-              ))}
+    <div id="men-collection" className="collection-row">
+              {menProducts.length > 0 ? (
+  menProducts.map((product) => (
+    <article className="collection-card" key={product._id}>
+      <img src={product.image} alt={product.name} />
+    </article>
+  ))
+) : (
+  menRepeatedImages.map((image, index) => (
+    <article className="collection-card" key={`men-${index}`}>
+      <img src={image} alt={`Men collection ${index + 1}`} />
+    </article>
+  ))
+)}
+  
+
             </div>
             <button
               className="collection-arrow right"
@@ -261,23 +274,20 @@ export default function Home() {
               <FaChevronLeft />
             </button>
             <div id="women-collection" className="collection-row">
-              {womenRepeatedImages.map((image, index) => (
-                <article className="collection-card" key={`women-${index}`}>
-                  {/* Collection-card wishlist button disabled for now.
-                  <button
-                    type="button"
-                    className={`wishlist-btn ${
-                      wishlistedCards[`women-${index}`] ? "active" : ""
-                    }`}
-                    aria-label="Toggle wishlist"
-                    onClick={() => toggleWishlist(`women-${index}`)}
-                  >
-                    <FaRegHeart />
-                  </button>
-                  */}
-                  <img src={image} alt={`Women collection ${index + 1}`} />
-                </article>
-              ))}
+              {womenProducts.length > 0 ? (
+  womenProducts.map((product) => (
+    <article className="collection-card" key={product._id}>
+      <img src={product.image} alt={product.name} />
+    </article>
+  ))
+) : (
+  womenRepeatedImages.map((image, index) => (
+    <article className="collection-card" key={`women-${index}`}>
+      <img src={image} alt={`Women collection ${index + 1}`} />
+    </article>
+  ))
+)}
+          
             </div>
             <button
               className="collection-arrow right"
@@ -302,23 +312,20 @@ export default function Home() {
               <FaChevronLeft />
             </button>
             <div id="genz-collection" className="collection-row">
-              {genzRepeatedImages.map((image, index) => (
-                <article className="collection-card" key={`genz-${index}`}>
-                  {/* Collection-card wishlist button disabled for now.
-                  <button
-                    type="button"
-                    className={`wishlist-btn ${
-                      wishlistedCards[`genz-${index}`] ? "active" : ""
-                    }`}
-                    aria-label="Toggle wishlist"
-                    onClick={() => toggleWishlist(`genz-${index}`)}
-                  >
-                    <FaRegHeart />
-                  </button>
-                  */}
-                  <img src={image} alt={`Gen Z collection ${index + 1}`} />
-                </article>
-              ))}
+            {genzProducts.length > 0 ? (
+  genzProducts.map((product) => (
+    <article className="collection-card" key={product._id}>
+      <img src={product.image} alt={product.name} />
+    </article>
+  ))
+) : (
+  genzRepeatedImages.map((image, index) => (
+    <article className="collection-card" key={`genz-${index}`}>
+      <img src={image} alt={`GenZ collection ${index + 1}`} />
+    </article>
+  ))
+)}  
+             
             </div>
             <button
               className="collection-arrow right"

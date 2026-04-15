@@ -22,7 +22,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch("http://localhost:8000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -35,13 +35,12 @@ export default function Login() {
 
       const data = await res.json();
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        navigate("/");
-      } else {
-        alert(data.message);
-      }
-
+  if (res.ok) {
+   localStorage.setItem("token", data.token);
+   navigate("/");
+  } else {
+    alert(data.error || data.message || "Login failed");
+  }
     } catch (error) {
       console.log(error);
       alert("Error logging in");
