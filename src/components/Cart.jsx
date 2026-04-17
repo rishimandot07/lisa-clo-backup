@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import "./cart.css";
 import {
   FaTrash,
@@ -7,43 +7,58 @@ import {
   FaRegHeart
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
 import logo from "../assets/logo.png";
-import outfit1 from "../assets/cart/img1.jpg";
-import outfit2 from "../assets/cart/img2.jpg";
-import outfit3 from "../assets/cart/img3.jpg";
+
+
 
 export default function CartPage() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
 
-  const cartItems = [
-    {
-      id: 1,
-      name: "off-Shoulder Top",
-      price: 999,
-      quantity: 1,
-      image: outfit1,
-    },
-    {
-      id: 2,
-      name: "Straight Fit Jeans",
-      price: 1599,
-      quantity: 1,
-      image: outfit2,
-    },
-    {
-      id: 3,
-      name: "Floral Dress",
-      price: 1499,
-      quantity: 1,
-      image: outfit3,
-    },
-  ];
+  const [cartItems, setCartItems] = useState([]);
+  useEffect(() => {
+  const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+  setCartItems(storedCart);
+}, []);
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+  const discount = 800;
+
+const mrpTotal = subtotal + discount;
+const totalDiscount = discount;
+const estimatedTotal = subtotal;
+
+const increaseQty = (id) => {
+  let updated = cartItems.map((item) =>
+    item._id === id
+      ? { ...item, quantity: item.quantity + 1 }
+      : item
+  );
+
+  setCartItems(updated);
+  localStorage.setItem("cart", JSON.stringify(updated));
+};
+
+const decreaseQty = (id) => {
+  let updated = cartItems
+    .map((item) =>
+      item._id === id
+        ? { ...item, quantity: item.quantity - 1 }
+        : item
+    )
+    .filter((item) => item.quantity > 0);
+
+  setCartItems(updated);
+  localStorage.setItem("cart", JSON.stringify(updated));
+};
+
+const removeItem = (id) => {
+  const updated = cartItems.filter((item) => item._id !== id);
+  setCartItems(updated);
+  localStorage.setItem("cart", JSON.stringify(updated));
+};
 
   return (
     <div className="cart-page">
@@ -89,21 +104,28 @@ export default function CartPage() {
         {/* Items */}
         <div className="cart-items">
           {cartItems.map((item) => (
-            <div key={item.id} className="cart-item">
-              <img src={item.image} alt={item.name} />
+            <div key={item._id} className="cart-item">
+              <img
+  src={`http://localhost:8000/uploads/${item.image.split("/").pop()}`}
+  alt={item.name}
+/>
 
               <div className="details">
                 <h3>{item.name}</h3>
-                <p>₹{item.price}</p>
+                <p>₹{(item.price || 0) * item.quantity}</p>
+<p className="unit-price">₹{item.price} each</p>
 
                 <div className="quantity">
-                  <button>-</button>
-                  <span>{item.quantity}</span>
-                  <button>+</button>
-                </div>
+  <button onClick={() => decreaseQty(item._id)}>-</button>
+  <span>{item.quantity}</span>
+  <button onClick={() => increaseQty(item._id)}>+</button>
+</div>
               </div>
 
-              <FaTrash className="delete-icon" />
+              <FaTrash
+  className="delete-icon"
+  onClick={() => removeItem(item._id)}
+/>
             </div>
           ))}
         </div>
@@ -117,12 +139,12 @@ export default function CartPage() {
 
         <div className="summary-row">
           <span>MRP total</span>
-          <span>₹{subtotal + 800}</span>
+          <span>₹{mrpTotal}</span>
         </div>
 
         <div className="summary-row">
           <span>Discount on MRP</span>
-          <span className="green">₹800.00</span>
+          <span>₹{totalDiscount}</span>
         </div>
 
         <div className="summary-row">
@@ -154,7 +176,7 @@ export default function CartPage() {
 
         <div className="summary-total">
           <span>Estimated Total</span>
-          <span>₹{subtotal}</span>
+          <span>₹{estimatedTotal}</span>
         </div>
 
         <button className="checkout-btn">Checkout</button>

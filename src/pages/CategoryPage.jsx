@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import { Link ,useParams} from "react-router-dom";
 import {
   FaRegHeart,
   FaHeart,
@@ -11,42 +11,187 @@ import {
 
 import logo from "../assets/logo.png";
 import "./CategoryPage.css";
-
 export default function CategoryPage() {
-  const { gender, category } = useParams();
-
+  const {category, type} = useParams();
+  const [cartItems, setCartItems] = useState([]);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
+  const [maxPrice, setMaxPrice] = useState(1500);
+  const [allProducts, setAllProducts] = useState([]);
 
-  const [wishlistedCards, setWishlistedCards] = useState({});
-  const [burstCards, setBurstCards] = useState({});
 
-  const toggleWishlist = (cardId) => {
-    const isCurrentlyWishlisted = !!wishlistedCards[cardId];
+useEffect(() => {
+  fetch("http://localhost:8000/api/products")
+    .then((res) => res.json())
+    .then((data) => setAllProducts(data));
+}, []); 
+console.log("ALL:", allProducts);
+console.log("CATEGORY:", category);
+console.log("TYPE:", type);
 
-    if (isCurrentlyWishlisted) {
-      setWishlistedCards((prev) => {
-        const updated = { ...prev };
-        delete updated[cardId];
-        return updated;
-      });
-      return;
-    }
+useEffect(() => {
+  const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+  setCartItems(storedCart);
+}, []);
+console.log("URL:", category, type);
+console.log("Products:", allProducts);
 
-    setWishlistedCards((prev) => ({ ...prev, [cardId]: true }));
-    setBurstCards((prev) => ({ ...prev, [cardId]: true }));
+const normalize = (str) => {
+  return (str || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, ""); // removes space, -, ', etc
+};
 
-    setTimeout(() => {
-      setBurstCards((prev) => {
-        const updated = { ...prev };
-        delete updated[cardId];
-        return updated;
-      });
-    }, 500);
-  };
+ const filteredProducts = (allProducts || []).filter((p) => {
+  const name = normalize(p.name);
+  const categoryData = normalize(p.category);
+
+  const selectedCategory = normalize(category);
+  const selectedType = normalize(type);
+
+  // CATEGORY
+  const categoryMatch =
+    !selectedCategory || categoryData === selectedCategory;
+
+  // TYPE
+  const typeMatch =
+    !selectedType ||
+    name.includes(selectedType) ||
+    selectedType.includes(name);
+
+  // SIZE
+  const sizeMatch =
+    !selectedSize ||
+    (p.size && p.size.includes(selectedSize));
+
+  // COLOR
+  const colorMatch =
+    !selectedColor ||
+    (p.color && p.color.includes(selectedColor));
+
+  // PRICE
+  const priceMatch = p.price <= maxPrice;
 
   return (
+    categoryMatch &&
+    typeMatch &&
+    sizeMatch &&
+    colorMatch &&
+    priceMatch
+  );
+});
+console.log("CATEGORY:", category);
+console.log("TYPE:", type);
+console.log("FILTERED:", filteredProducts);
+
+  const [wishlistedCards, setWishlistedCards] = useState({});
+  useEffect(() => {
+  const stored = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+  const mapped = {};
+  stored.forEach((item) => {
+    mapped[item._id] = true;
+  });
+    setWishlistedCards(mapped);
+  },[]);
+  const [burstCards, setBurstCards] = useState({});
+
+  const toggleWishlist = (product) => {
+  const wishlist =
+    JSON.parse(localStorage.getItem("wishlist")) || [];
+
+  const exists = wishlist.find((item) => item._id === product._id);
+
+  if (exists) {
+    const newWishlist = wishlist.filter(
+      (item) => item._id !== product._id
+    );
+    localStorage.setItem("wishlist", JSON.stringify(newWishlist));
+
+    setWishlistedCards((prev) => {
+      const updated = { ...prev };
+      delete updated[product._id];
+      return updated;
+    });
+
+    return;
+  }
+
+  const newWishlist = [...wishlist, product];
+  localStorage.setItem("wishlist", JSON.stringify(newWishlist));
+
+  setWishlistedCards((prev) => ({
+    ...prev,
+    [product._id]: true,
+  }));
+
+  setBurstCards((prev) => ({
+    ...prev,
+    [product._id]: true,
+  }));
+
+  setTimeout(() => {
+    setBurstCards((prev) => {
+      const updated = { ...prev };
+      delete updated[product._id];
+      return updated;
+    });
+  }, 500);
+};
+const addToCart = (product) => {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  const existing = cart.find((item) => item._id === product._id);
+
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({
+  _id: product._id,
+  name: product.name,
+  image: product.image,
+  price: product.price,   // ✅ ADD THIS LINE
+  quantity: 1
+});
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  setCartItems(cart); // update UI
+};
+
+const increaseQty = (id) => {
+  let cart = [...cartItems];
+
+  cart = cart.map((item) =>
+    item._id === id
+      ? { ...item, quantity: item.quantity + 1 }
+      : item
+  );
+
+  setCartItems(cart);
+  localStorage.setItem("cart", JSON.stringify(cart));
+};
+
+const decreaseQty = (id) => {
+  let cart = [...cartItems];
+
+  cart = cart
+    .map((item) =>
+      item._id === id
+        ? { ...item, quantity: item.quantity - 1 }
+        : item
+    )
+    .filter((item) => item.quantity > 0);
+
+  setCartItems(cart);
+  localStorage.setItem("cart", JSON.stringify(cart));
+};
+
+       return (
     <div className="category-page">
+      <h2>{category?.toUpperCase()} COLLECTION</h2>
       {/* HEADER */}
       <header className="header">
         <div className="header-content">
@@ -107,8 +252,17 @@ export default function CategoryPage() {
               <h3>Size</h3>
               <div className="filter-options">
                 {["XS", "S", "M", "L"].map((size) => (
-                  <button key={size}>{size}</button>
-                ))}
+  <button
+    key={size}
+    onClick={() => setSelectedSize(size)}
+    style={{
+      background: selectedSize === size ? "#000" : "",
+      color: selectedSize === size ? "#fff" : "",
+    }}
+  >
+    {size}
+  </button>
+))}
               </div>
             </div>
 
@@ -127,43 +281,102 @@ export default function CategoryPage() {
                   "#fff3bf",   // pastel yellow
                   "#e6fcf5",   // pastel mint
                 ].map((color, i) => (
-                  <span
-                    key={i}
-                    className="color-circle"
-                    style={{ background: color }}
-                  ></span>
-                ))}
+                 <span
+  key={i}
+  className="color-circle"
+  style={{
+    background: color,
+    border: selectedColor === color ? "2px solid black" : "",
+    cursor: "pointer",
+  }}
+  onClick={() => setSelectedColor(color)}
+></span>
+              ))}
               </div>
             </div>
 
             {/* PRICE */}
             <div className="filter-section">
               <h3>Price</h3>
-              <input type="range" min="0" max="1500" />
-              <p>₹0 - ₹1500</p>
+             <input
+  type="range"
+  min="0"
+  max="1500"
+  value={maxPrice}
+  onChange={(e) => setMaxPrice(Number(e.target.value))}
+/>
+<p>₹0 - ₹{maxPrice}</p>
             </div>
+            <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
+  
+  {/* CLEAR FILTER (same as reset basically) */}
+  <button
+    onClick={() => {
+      setSelectedSize("");
+      setSelectedColor("");
+      setMaxPrice(1500);
+    }}
+    style={{
+      padding: "10px",
+      flex: 1,
+      border: "1px solid #ccc",
+      background: "#fff",
+      cursor: "pointer"
+    }}
+  >
+    Clear Filters
+  </button>
+
+ 
+  <button
+  onClick={() => {
+    setIsFilterOpen(false);
+  }}
+  style={{
+    padding: "10px",
+    width: "100%",
+    border: "none",
+    background: "#000",
+    color: "#fff",
+    cursor: "pointer"
+  }}
+>
+  Apply
+</button>
+
+</div>
           </div>
         </div>
       )}
 
       {/* PRODUCTS */}
       <div className="product-grid">
-        {[1, 2, 3, 4, 5, 6].map((item) => (
-          <div className="product-card" key={item}>
+        {filteredProducts.length === 0 && (
+  <h2 style={{ textAlign: "center", marginTop: "50px" }}>
+    No products found
+  </h2>
+)}
+        {filteredProducts.map((item) => (
+          <div className="product-card" key={item._id}>
             <div className="image-wrapper">
+              <img
+    className="product-image"
+   src={item.image}
+    alt={item.name}
+  />
               <button
                 className={`wishlist-btn ${
-                  wishlistedCards[item] ? "active" : ""
-                } ${burstCards[item] ? "burst" : ""}`}
+                  wishlistedCards[item._id] ? "active" : ""
+                } ${burstCards[item._id] ? "burst" : ""}`}
                 onClick={() => toggleWishlist(item)}
               >
-                {wishlistedCards[item] ? <FaHeart /> : <FaRegHeart />}
+                {wishlistedCards[item._id] ? <FaHeart /> : <FaRegHeart />}
               </button>
             </div>
 
             <div className="product-info">
-              <p className="product-name">Sample Product</p>
-              <p className="product-price">₹999</p>
+              <p className="product-name">{item.name}</p>
+<p className="product-price">₹{item.price}</p>
 
               <select className="size-select">
                 <option>XS</option>
@@ -171,8 +384,27 @@ export default function CategoryPage() {
                 <option>M</option>
                 <option>L</option>
               </select>
+                {cartItems.find((p) => p._id === item._id) ? (
+  <div className="qty-control">
+    <button onClick={() => decreaseQty(item._id)}>-</button>
 
-              <button className="add-btn">Add to Cart</button>
+    <span>
+      {
+        cartItems.find((p) => p._id === item._id).quantity
+      }
+    </span>
+
+    <button onClick={() => increaseQty(item._id)}>+</button>
+  </div>
+) : (
+  <button
+    className="add-btn"
+    onClick={() => addToCart(item)}
+  >
+    Add to Cart
+  </button>
+)}
+          
             </div>
           </div>
         ))}

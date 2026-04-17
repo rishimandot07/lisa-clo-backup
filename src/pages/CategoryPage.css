@@ -71,6 +71,31 @@
   width: 100%;
   height: 260px;
   background: #ece3d8;
+  position: relative;
+}
+
+.wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+
+  background: transparent;  /* remove white bg */
+  border: none;             /* remove square border */
+  padding: 0;               /* remove spacing */
+  width: auto;
+  height: auto;
+
+  cursor: pointer;
+}
+
+.wishlist-btn svg {
+  font-size: 20px;
+  color: #555;   /* default color */
+}
+
+.wishlist-btn.active svg {
+  color: red;    /* when clicked ❤️ */
 }
 
 /* ================= FILTER DROPDOWN ================= */
@@ -206,4 +231,23 @@
   font-size: 13px;
   margin-top: 6px;
   color: #666;
+}
+.qty-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.qty-control button {
+  padding: 5px 10px;
+  border: none;
+  background: #8b5e3c;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.qty-control span {
+  font-weight: bold;
 }

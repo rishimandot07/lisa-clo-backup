@@ -1,51 +1,75 @@
-import React, { useState } from "react";
+import React, { useEffect , useState} from "react";
 import "./wishlist.css";
 import { Link } from "react-router-dom";
 import { FaTimes, FaHome, FaUserCircle } from "react-icons/fa";
 
 import logo from "../assets/logo.png";
-import outfit1 from "../assets/wishlist/img1.jpg";
-import outfit2 from "../assets/wishlist/img2.jpg";
-import outfit3 from "../assets/wishlist/img3.jpg";
-import outfit4 from "../assets/wishlist/img4.jpg";
 
 export default function Wishlist() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [items, setItems] = useState(() => {
+  return JSON.parse(localStorage.getItem("wishlist")) || [];
+});
+const [cartItems, setCartItems] = useState([]);
+useEffect(() => {
+  const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+  setCartItems(storedCart);
+}, []);
 
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      name: "Off Shoulder Mesh Red Dress",
-      price: 1199,
-      size: "XS",
-      image: outfit1,
-    },
-    {
-      id: 2,
-      name: "Brown Bodycon Dress",
-      price: 1299,
-      size: "XS",
-      image: outfit2,
-    },
-    {
-      id: 3,
-      name: "Oversized Top",
-      price: 999,
-      size: "XS",
-      image: outfit3,
-    },
-    {
-      id: 4,
-      name: "Bell sleeves Top",
-      price: 549,
-      size: "XS",
-      image: outfit4,
-    },
-  ]);
+ const removeItem = (id) => {
+  const updated = items.filter((item) => item._id !== id);
+  setItems(updated);
 
-  const removeItem = (id) => {
-    setItems(items.filter((item) => item.id !== id));
-  };
+  localStorage.setItem("wishlist", JSON.stringify(updated));
+};
+const addToCart = (product) => {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  const existing = cart.find((item) => item._id === product._id);
+
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({
+  _id: product._id,
+  name: product.name,
+  image: product.image,
+  price: product.price,   // ✅ ADD THIS LINE
+  quantity: 1
+});
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  setCartItems(cart);
+};
+
+const increaseQty = (id) => {
+  let cart = [...cartItems];
+
+  cart = cart.map((item) =>
+    item._id === id
+      ? { ...item, quantity: item.quantity + 1 }
+      : item
+  );
+
+  setCartItems(cart);
+  localStorage.setItem("cart", JSON.stringify(cart));
+};
+
+const decreaseQty = (id) => {
+  let cart = [...cartItems];
+
+  cart = cart
+    .map((item) =>
+      item._id === id
+        ? { ...item, quantity: item.quantity - 1 }
+        : item
+    )
+    .filter((item) => item.quantity > 0);
+
+  setCartItems(cart);
+  localStorage.setItem("cart", JSON.stringify(cart));
+};
 
   return (
     <div className="wishlist-page">
@@ -96,13 +120,20 @@ export default function Wishlist() {
                 
                 <button
                   className="remove-btn"
-                  onClick={() => removeItem(item.id)}
+                  onClick={() => removeItem(item._id)}
                 >
                   <FaTimes />
                 </button>
 
                 <div className="wishlist-img">
-                  <img src={item.image} alt={item.name} />
+                 <img
+  src={
+    item.image
+      ? `http://localhost:8000/uploads/${item.image.split("/").pop()}`
+      : "/fallback.png"
+  }
+  alt={item.name}
+/>
                 </div>
 
                 <h3>{item.name}</h3>
@@ -115,7 +146,24 @@ export default function Wishlist() {
                   <option>L</option>
                 </select>
 
-                <button className="add-btn">Add to Cart</button>
+                {cartItems.find((p) => p._id === item._id) ? (
+  <div className="qty-control">
+    <button onClick={() => decreaseQty(item._id)}>-</button>
+
+    <span>
+      {cartItems.find((p) => p._id === item._id).quantity}
+    </span>
+
+    <button onClick={() => increaseQty(item._id)}>+</button>
+  </div>
+) : (
+  <button
+    className="add-btn"
+    onClick={() => addToCart(item)}
+  >
+    Add to Cart
+  </button>
+)}
               </div>
             ))}
           </div>

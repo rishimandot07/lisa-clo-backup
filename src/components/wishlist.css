@@ -184,3 +184,22 @@
 .dropdown-btn:hover {
   background: #f3eadb;
 }
+.qty-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.qty-control button {
+  padding: 5px 10px;
+  border: none;
+  background: #8b5e3c;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.qty-control span {
+  font-weight: bold;
+}
