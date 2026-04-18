@@ -11,6 +11,8 @@ import {
 
 import logo from "../assets/logo.png";
 import "./CategoryPage.css";
+import { apiPath, resolveMediaUrl } from "../config/api";
+
 export default function CategoryPage() {
   const {category, type} = useParams();
   const [cartItems, setCartItems] = useState(() => {
@@ -41,7 +43,7 @@ export default function CategoryPage() {
   const [burstCards, setBurstCards] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/products")
+    fetch(apiPath("/api/products"))
       .then((res) => res.json())
       .then((data) => setAllProducts(data));
   }, []);
@@ -354,7 +356,7 @@ const decreaseQty = (id) => {
             <div className="image-wrapper">
               <img
     className="product-image"
-   src={item.image}
+   src={resolveMediaUrl(item.image)}
     alt={item.name}
   />
               <button

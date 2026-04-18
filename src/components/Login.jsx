@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import "./auth.css";
+import { apiPath } from "../config/api";
 
 export default function Login() {
   const [show, setShow] = useState(false);
@@ -23,7 +24,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8000/api/auth/login", {
+      const res = await fetch(apiPath("/api/auth/login"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

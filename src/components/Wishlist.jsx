@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FaTimes, FaHome, FaUserCircle } from "react-icons/fa";
 
 import logo from "../assets/logo.png";
+import { resolveMediaUrl } from "../config/api";
 
 export default function Wishlist() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
@@ -131,7 +132,7 @@ const decreaseQty = (id) => {
                  <img
   src={
     item.image
-      ? `http://localhost:8000/uploads/${item.image.split("/").pop()}`
+      ? resolveMediaUrl(item.image)
       : "/fallback.png"
   }
   alt={item.name}

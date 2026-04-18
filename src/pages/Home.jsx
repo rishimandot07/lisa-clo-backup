@@ -28,6 +28,8 @@ import genzImageThree from "../assets/Gen Z Collection's/img3.jpg";
 import genzImageFour from "../assets/Gen Z Collection's/img4.jpg";
 import genzImageFive from "../assets/Gen Z Collection's/img5.jpg";
 import { useNavigate } from "react-router-dom";
+import { apiPath, resolveMediaUrl } from "../config/api";
+
 export default function Home() {
   const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -37,7 +39,7 @@ export default function Home() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   useEffect(() => {
-    fetch("http://localhost:8000/api/products")
+    fetch(apiPath("/api/products"))
       .then((res) => res.json())
       .then((data) => setAllProducts(data))
       .catch((err) => console.error(err));
@@ -245,7 +247,7 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
         <div className="image-wrapper">
           <img
             className="collection-image"
-            src={product.image}
+            src={resolveMediaUrl(product.image)}
             alt={product.name}
           />
         </div>
@@ -294,7 +296,7 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
                   <div className="image-wrapper">
                     <img
                       className="collection-image"
-                      src={product.image}
+                      src={resolveMediaUrl(product.image)}
                       alt={product.name}
                     />
                   </div>
@@ -347,7 +349,7 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
                   <div className="image-wrapper">
                     <img
                       className="collection-image"
-                      src={product.image}
+                      src={resolveMediaUrl(product.image)}
                       alt={product.name}
                     />
                   </div>
@@ -465,7 +467,7 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
 >
                     <img
   className="product-thumb"
-  src={`http://localhost:8000/uploads/${item.image.split("/").pop()}`}
+  src={resolveMediaUrl(item.image)}
   alt={item.name}
 />
                     <div>
