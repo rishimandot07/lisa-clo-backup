@@ -143,11 +143,13 @@ const addToCart = (product) => {
   if (existing) {
     existing.quantity += 1;
   } else {
-    cart.push({
+  cart.push({
   _id: product._id,
   name: product.name,
-  image: product.image,
-  price: product.price,   // ✅ ADD THIS LINE
+  image: product.image.startsWith("http")
+    ? product.image
+    : `http://localhost:8000/${product.image}`,
+  price: product.price,
   quantity: 1
 });
   }

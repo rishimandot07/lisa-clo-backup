@@ -1,6 +1,6 @@
 /*eslint-disable no-undef */
+console.log("✅ SERVER FILE LOADED");
 require("dotenv").config({ path: __dirname + "/.env" });
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
 const Product = require("./models/Product");
-
+const Order = require("./models/Order");
 const PORT = Number(process.env.PORT) || 8000;
 const PUBLIC_ORIGIN = (
   process.env.PUBLIC_ORIGIN || `http://localhost:${PORT}`
@@ -151,6 +151,23 @@ app.post("/users", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// ===== CREATE ORDER =====
+app.post("/api/orders", async (req, res) => {
+  try {
+    console.log("🔥 ORDER RECEIVED:", req.body);
+
+    const newOrder = new Order(req.body);
+    await newOrder.save();
+
+    res.status(201).json({ message: "Order saved" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 mongoose
   .connect(process.env.MONGO_URI)

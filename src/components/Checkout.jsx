@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaHome, FaRegHeart, FaUserCircle } from "react-icons/fa";
 import logo from "../assets/logo.png";
@@ -6,15 +6,76 @@ import "./checkout.css";
 
 export default function CheckoutPage() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [formData, setFormData] = useState({
+  fullName: "",
+  email: "",
+  phone: "",
+  city: "",
+  addressOne: "",
+  addressTwo: "",
+  state: "",
+  pincode: "",
+  notes: ""
+});
 
-  const orderItems = [
-    { id: 1, name: "Off-Shoulder Top", price: 999 },
-    { id: 2, name: "Straight Fit Jeans", price: 1599 },
-  ];
+const [cartItems, setCartItems] = useState([]);
+useEffect(() => {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  setCartItems(cart);
+}, []);
 
-  const subtotal = orderItems.reduce((sum, item) => sum + item.price, 0);
-  const shipping = 0;
-  const total = subtotal + shipping;
+const handleChange = (e) => {
+  setFormData({
+    ...formData,
+    [e.target.id]: e.target.value
+  });
+};
+
+ const subtotal = cartItems.reduce(
+  (sum, item) => sum + item.price * item.quantity,
+  0
+);
+
+const shipping = 0;
+const total = subtotal + shipping;
+
+const placeOrder = async () => {
+  const orderData = {
+    customer: {
+      name: document.getElementById("fullName").value,
+      email: document.getElementById("email").value,
+      phone: document.getElementById("phone").value,
+      city: document.getElementById("city").value,
+      address1: document.getElementById("addressOne").value,
+      address2: document.getElementById("addressTwo").value,
+      state: document.getElementById("state").value,
+      pincode: document.getElementById("pincode").value,
+      notes: document.getElementById("notes").value,
+    },
+    items: JSON.parse(localStorage.getItem("cart")) || [],
+    total: total,
+  };
+
+  console.log("📦 Sending order:", orderData);
+
+  try {
+    const res = await fetch("http://localhost:8000/api/orders", {
+      method: "POST", // ✅ VERY IMPORTANT
+      headers: {
+        "Content-Type": "application/json", // ✅ VERY IMPORTANT
+      },
+      body: JSON.stringify(orderData), // ✅ VERY IMPORTANT
+    });
+
+    const data = await res.json();
+
+    alert("Order Placed ✅");
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error ❌");
+  }
+};
 
   return (
     <div className="checkout-page">
@@ -71,42 +132,90 @@ export default function CheckoutPage() {
           <div className="checkout-form-grid">
             <div className="field-group">
               <label htmlFor="fullName">Full name</label>
-              <input id="fullName" type="text" placeholder="Enter your full name" />
+             <input
+              id="fullName"
+             type="text"
+             placeholder="Enter your full name"
+              value={formData.fullName}
+              onChange={handleChange}
+              />
             </div>
 
             <div className="field-group">
               <label htmlFor="email">Email</label>
-              <input id="email" type="email" placeholder="Enter your email" />
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="field-group">
               <label htmlFor="phone">Phone</label>
-              <input id="phone" type="tel" placeholder="Enter your phone number" />
+              <input
+                id="phone"
+                type="tel"
+                placeholder="Enter your phone number"
+                value={formData.phone}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="field-group">
               <label htmlFor="city">City</label>
-              <input id="city" type="text" placeholder="Enter your city" />
+              <input
+                id="city"
+                type="text"
+                placeholder="Enter your city"
+                value={formData.city}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="field-group full-width">
               <label htmlFor="addressOne">Address line 1</label>
-              <input id="addressOne" type="text" placeholder="House number and street name" />
+              <input
+                id="addressOne"
+                type="text"
+                placeholder="House number and street name"
+                value={formData.addressOne}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="field-group full-width">
               <label htmlFor="addressTwo">Address line 2</label>
-              <input id="addressTwo" type="text" placeholder="Apartment, suite, landmark (optional)" />
+              <input
+                id="addressTwo"
+                type="text"
+                placeholder="Apartment, suite, landmark (optional)"
+                value={formData.addressTwo}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="field-group">
               <label htmlFor="state">State</label>
-              <input id="state" type="text" placeholder="Enter your state" />
+              <input
+                id="state"
+                type="text"
+                placeholder="Enter your state"
+                value={formData.state}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="field-group">
               <label htmlFor="pincode">Pincode</label>
-              <input id="pincode" type="text" placeholder="Enter pincode" />
+              <input
+                id="pincode"
+                type="text"
+                placeholder="Enter pincode"
+                value={formData.pincode}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="field-group full-width">
@@ -115,6 +224,8 @@ export default function CheckoutPage() {
                 id="notes"
                 rows="5"
                 placeholder="Add delivery notes or any special instructions"
+                value={formData.notes}
+                onChange={handleChange}
               ></textarea>
             </div>
           </div>
@@ -124,14 +235,14 @@ export default function CheckoutPage() {
           <h2>Your Order</h2>
 
           <div className="summary-items">
-            {orderItems.map((item) => (
-              <div key={item.id} className="summary-item">
-                <div>
-                  <p className="summary-item-name">{item.name}</p>
-                  <p className="summary-item-meta">Qty: 1</p>
-                </div>
-                <span>₹{item.price}</span>
-              </div>
+            {cartItems.map((item) => (
+            <div key={item._id} className="summary-item">
+             <div>
+              <p className="summary-item-name">{item.name}</p>
+              <p className="summary-item-meta">Qty: {item.quantity}</p>
+             </div>
+             <span>₹{item.price}</span>
+            </div>
             ))}
           </div>
 
@@ -152,12 +263,12 @@ export default function CheckoutPage() {
             <span>₹{total}</span>
           </div>
 
-          <button className="place-order-btn" type="button">
+          <button onClick={placeOrder} className="place-order-btn" type="button" >
             Place Order
           </button>
 
           <p className="checkout-note">
-            Payment and backend order wiring will be connected later.
+                  Payment will be connected later.
           </p>
         </aside>
       </main>

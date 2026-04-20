@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "./cart.css";
 import {
   FaTrash,
@@ -9,41 +9,49 @@ import {
 import { Link } from "react-router-dom";
 
 import logo from "../assets/logo.png";
-import outfit1 from "../assets/cart/img1.jpg";
-import outfit2 from "../assets/cart/img2.jpg";
-import outfit3 from "../assets/cart/img3.jpg";
 
 export default function CartPage() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
 
-  const cartItems = [
-    {
-      id: 1,
-      name: "off-Shoulder Top",
-      price: 999,
-      quantity: 1,
-      image: outfit1,
-    },
-    {
-      id: 2,
-      name: "Straight Fit Jeans",
-      price: 1599,
-      quantity: 1,
-      image: outfit2,
-    },
-    {
-      id: 3,
-      name: "Floral Dress",
-      price: 1499,
-      quantity: 1,
-      image: outfit3,
-    },
-  ];
+useEffect(() => {
+  const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+  setCartItems(storedCart);
+}, []);
 
+const removeItem = (id) => {
+  const updatedCart = cartItems.filter(item => item._id !== id);
+
+  setCartItems(updatedCart);
+  localStorage.setItem("cart", JSON.stringify(updatedCart));
+};
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+console.log("CART ITEMS:", cartItems);
+
+const increaseQty = (id) => {
+  const updatedCart = cartItems.map(item =>
+    item._id === id
+      ? { ...item, quantity: item.quantity + 1 }
+      : item
+  );
+
+  setCartItems(updatedCart);
+  localStorage.setItem("cart", JSON.stringify(updatedCart));
+};
+
+const decreaseQty = (id) => {
+  const updatedCart = cartItems.map(item =>
+    item._id === id && item.quantity > 1
+      ? { ...item, quantity: item.quantity - 1 }
+      : item
+  );
+
+  setCartItems(updatedCart);
+  localStorage.setItem("cart", JSON.stringify(updatedCart));
+};
 
   return (
     <div className="cart-page">
@@ -89,21 +97,25 @@ export default function CartPage() {
         {/* Items */}
         <div className="cart-items">
           {cartItems.map((item) => (
-            <div key={item.id} className="cart-item">
-              <img src={item.image} alt={item.name} />
-
+            <div key={item._id} className="cart-item">
+              <img src={ item.image} alt={item.name}/>
               <div className="details">
                 <h3>{item.name}</h3>
                 <p>₹{item.price}</p>
 
                 <div className="quantity">
-                  <button>-</button>
-                  <span>{item.quantity}</span>
-                  <button>+</button>
+                  <button onClick={() => decreaseQty(item._id)}>-</button>
+
+<span>{item.quantity}</span>
+
+<button onClick={() => increaseQty(item._id)}>+</button>
                 </div>
               </div>
 
-              <FaTrash className="delete-icon" />
+             <FaTrash 
+  className="delete-icon" 
+  onClick={() => removeItem(item._id)} 
+/>
             </div>
           ))}
         </div>
@@ -128,11 +140,6 @@ export default function CartPage() {
         <div className="summary-row">
           <span>Cart Subtotal</span>
           <span>₹{subtotal}</span>
-        </div>
-
-        <div className="summary-row">
-          <span>Total discount</span>
-          <span className="green">₹0.00</span>
         </div>
 
         <div className="summary-row">
