@@ -17,6 +17,11 @@ import slideOne from "../assets/homescreen/img1.jpg";
 import slideTwo from "../assets/homescreen/img2.png";
 import slideThree from "../assets/homescreen/img3.png";
 import slideFour from "../assets/homescreen/img4.png";
+import menImageOne from "../assets/Men's Collection/img1.jpg";
+import menImageTwo from "../assets/Men's Collection/img2.jpg";
+import menImageThree from "../assets/Men's Collection/img3.jpg";
+import menImageFour from "../assets/Men's Collection/img4.jpg";
+import menImageFive from "../assets/Men's Collection/img5.jpg";
 import womenImageOne from "../assets/Women's Collection/img1.jpg";
 import womenImageTwo from "../assets/Women's Collection/img2.jpg";
 import womenImageThree from "../assets/Women's Collection/img3.jpg";
@@ -54,6 +59,15 @@ export default function Home() {
   }, [searchQuery, allProducts]);
 
   const slides = [slideOne, slideTwo, slideThree,slideFour];
+
+  const menRepeatedImages = [
+  menImageOne,
+  menImageTwo,
+  menImageThree,
+  menImageFour,
+  menImageFive,
+  menImageTwo, 
+];
   
   const womenRepeatedImages = [
     womenImageOne,
@@ -233,21 +247,27 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
             >
               <FaChevronLeft />
             </button>
-    <div id="men-collection" className="collection-row">
-  {menProducts && menProducts.length > 0 ? (
+  
+
+<div id="men-collection" className="collection-row">
+  {menProducts.length > 0 ? (
     menProducts.map((product) => (
       <article
-  className="collection-card"
-  key={product._id}
-  onClick={() =>
- navigate(`/category/men/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`)
-}
-  style={{ cursor: "pointer" }}
->
+        className="collection-card"
+        key={product._id}
+        onClick={() =>
+          navigate(
+            `/category/men/${product.name
+              .toLowerCase()
+              .replace(/[^a-z0-9]/g, "")}`
+          )
+        }
+        style={{ cursor: "pointer" }}
+      >
         <div className="image-wrapper">
           <img
             className="collection-image"
-            src={resolveMediaUrl()}
+            src={resolveMediaUrl(product.image)}   // ✅ FIXED LINE
             alt={product.name}
           />
         </div>
@@ -255,7 +275,12 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
       </article>
     ))
   ) : (
-    <p style={{ padding: "20px" }}>Loading...</p>
+    // ✅ ADD THIS FALLBACK (you were missing it)
+    menRepeatedImages.map((image, index) => (
+      <article className="collection-card" key={`men-${index}`}>
+        <img src={image} alt={`Men collection ${index + 1}`} />
+      </article>
+    ))
   )}
 </div>
             <button
