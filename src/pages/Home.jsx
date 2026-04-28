@@ -134,9 +134,11 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-const menProducts = allProducts.filter((p) => p.category?.toLowerCase() === "men");
-const womenProducts = allProducts.filter((p) => p.category === "women");
-const genzProducts = allProducts.filter((p) => p.category === "genz");
+  const menProducts = allProducts.filter(
+  (p) => p.category && p.category.toLowerCase() === "men"
+);
+const womenProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "women");
+const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "genz");
 
   return (
     <div className="page">
@@ -267,6 +269,8 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
   
 
       <div id="men-collection" className="collection-row">
+
+        {console.log("MEN PRODUCTS:", menProducts)}
   {menProducts.map((product) => {
     const imageUrl =
       product && product.image
