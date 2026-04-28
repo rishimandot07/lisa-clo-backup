@@ -1,3 +1,4 @@
+/*eslint-disable no-undef */
 import React, { useEffect, useMemo, useState } from "react";
 import Collections from "../components/Collections";
 import { Link } from "react-router-dom";
@@ -43,25 +44,27 @@ export default function Home() {
 
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  useEffect(() => {
-  const wakeServer = async () => {
+ useEffect(() => {
+  const loadData = async () => {
     try {
+      
       await fetch("https://lisa-clo-backup.onrender.com/");
       console.log("Backend awakened");
-    } catch (e) {
-      console.log("Wake attempt failed");
-    }
 
-    try {
-      const res = await fetch(apiPath("/api/products"));
+      
+      const res = await fetch("https://lisa-clo-backup.onrender.com/api/products");
       const data = await res.json();
-      setAllProducts(data);
+
+      console.log("API DATA:", data);
+
+      setAllProducts(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error(err);
+      console.error("FETCH ERROR:", err);
+      setAllProducts([]);
     }
   };
 
-  wakeServer();
+  loadData();
 }, []);
 
   const filteredProducts = useMemo(() => {
@@ -131,8 +134,7 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-const menProducts = allProducts.filter((p) => p.category === "men");
-console.log("MEN PRODUCTS:", menProducts);
+const menProducts = allProducts.filter((p) => p.category?.toLowerCase() === "men");
 const womenProducts = allProducts.filter((p) => p.category === "women");
 const genzProducts = allProducts.filter((p) => p.category === "genz");
 
@@ -280,9 +282,15 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
         style={{ cursor: "pointer" }}
       >
         <div className="image-wrapper">
-         <img
+        <img
   className="collection-image"
-  src={product.image}
+  src={
+    product.image
+      ? product.image.startsWith("http")
+        ? product.image
+        : `https://lisa-clo-backup.onrender.com${product.image}`
+      : "https://via.placeholder.com/300"
+  }
   alt={product.name}
 />
         </div>
