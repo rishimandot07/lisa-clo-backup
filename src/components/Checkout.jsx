@@ -59,7 +59,7 @@ const placeOrder = async () => {
   console.log("📦 Sending order:", orderData);
 
   try {
-    const res = await fetch("http://localhost:8000/api/orders", {
+    const res = await fetch("https://lisa-clo-backup.onrender.com/api/orders", {
       method: "POST", // ✅ VERY IMPORTANT
       headers: {
         "Content-Type": "application/json", // ✅ VERY IMPORTANT

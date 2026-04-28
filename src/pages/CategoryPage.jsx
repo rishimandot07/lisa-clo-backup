@@ -148,7 +148,7 @@ const addToCart = (product) => {
   name: product.name,
   image: product.image.startsWith("http")
     ? product.image
-    : `http://localhost:8000/${product.image}`,
+    : `https://lisa-clo-backup.onrender.com/${product.image}`,
   price: product.price,
   quantity: 1
 });
