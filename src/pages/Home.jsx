@@ -44,11 +44,25 @@ export default function Home() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   useEffect(() => {
-    fetch(apiPath("/api/products"))
-      .then((res) => res.json())
-      .then((data) => setAllProducts(data))
-      .catch((err) => console.error(err));
-  }, []);
+  const wakeServer = async () => {
+    try {
+      await fetch("https://lisa-clo-backup.onrender.com/");
+      console.log("Backend awakened");
+    } catch (e) {
+      console.log("Wake attempt failed");
+    }
+
+    try {
+      const res = await fetch(apiPath("/api/products"));
+      const data = await res.json();
+      setAllProducts(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  wakeServer();
+}, []);
 
   const filteredProducts = useMemo(() => {
     if (searchQuery.trim() === "") return [];
