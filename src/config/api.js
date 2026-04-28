@@ -1,6 +1,6 @@
-/** Teammate setup: API defaults to port 8000 unless VITE_API_URL is set. */
+
 export const API_ORIGIN = (
-  import.meta.env.VITE_API_URL || "http://localhost:8000"
+  import.meta.env.VITE_API_URL || "https://lisa-clo-backup.onrender.com/"
 ).replace(/\/$/, "");
 
 export function apiPath(path) {

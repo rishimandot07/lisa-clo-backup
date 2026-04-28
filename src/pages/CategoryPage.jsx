@@ -147,8 +147,8 @@ const addToCart = (product) => {
   _id: product._id,
   name: product.name,
   image: product.image.startsWith("http")
-    ? product.image
-    : `http://localhost:8000/${product.image}`,
+  ? product.image
+  : `${import.meta.env.VITE_API_URL}${product.image.startsWith("/") ? "" : "/"}${product.image}`,
   price: product.price,
   quantity: 1
 });
