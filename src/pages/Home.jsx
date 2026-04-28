@@ -266,7 +266,7 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
             </button>
   
 
-<div id="men-collection" className="collection-row">
+      <div id="men-collection" className="collection-row">
   {menProducts.map((product) => {
     const imageUrl =
       product && product.image
@@ -278,7 +278,8 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
     return (
       <article
         className="collection-card"
-        key={product._id}
+        key={product._id|| Math.random()}
+        
         onClick={() =>
           navigate(
             `/category/men/${product.name
@@ -289,13 +290,17 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
         style={{ cursor: "pointer" }}
       >
         <div className="image-wrapper">
-          {imageUrl && (
-            <img
-              className="collection-image"
-              src={imageUrl}
-              alt={product.name}
-            />
-          )}
+         <img
+  className="collection-image"
+  src={
+    product?.image
+      ? product.image.startsWith("http")
+        ? product.image
+        : `https://lisa-clo-backup.onrender.com${product.image}`
+      : "https://via.placeholder.com/300"
+  }
+  alt={product.name}
+/>
         </div>
         <p className="product-name">{product.name}</p>
       </article>
