@@ -32,7 +32,11 @@ const upload = multer({ storage: storage });
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
-app.use("/uploads", express.static(uploadDir));
+app.use("/uploads", express.static(uploadDir, {
+  setHeaders: (res, path) => {
+    res.set("Access-Control-Allow-Origin", "*");
+  }
+}));
 
 app.get("/", (_req, res) => {
   res.send("Backend Running 🚀");
