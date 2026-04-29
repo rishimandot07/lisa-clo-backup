@@ -1,3 +1,4 @@
+/*eslint-disable no-undef */
 import React, { useEffect, useMemo, useState } from "react";
 import Collections from "../components/Collections";
 import { Link } from "react-router-dom";
@@ -17,6 +18,11 @@ import slideOne from "../assets/homescreen/img1.jpg";
 import slideTwo from "../assets/homescreen/img2.png";
 import slideThree from "../assets/homescreen/img3.png";
 import slideFour from "../assets/homescreen/img4.png";
+import menImageOne from "../assets/Men's Collection/img1.jpg";
+import menImageTwo from "../assets/Men's Collection/img2.jpg";
+import menImageThree from "../assets/Men's Collection/img3.jpg";
+import menImageFour from "../assets/Men's Collection/img4.jpg";
+import menImageFive from "../assets/Men's Collection/img5.jpg";
 import womenImageOne from "../assets/Women's Collection/img1.jpg";
 import womenImageTwo from "../assets/Women's Collection/img2.jpg";
 import womenImageThree from "../assets/Women's Collection/img3.jpg";
@@ -28,7 +34,7 @@ import genzImageThree from "../assets/Gen Z Collection's/img3.jpg";
 import genzImageFour from "../assets/Gen Z Collection's/img4.jpg";
 import genzImageFive from "../assets/Gen Z Collection's/img5.jpg";
 import { useNavigate } from "react-router-dom";
-import { apiPath, resolveMediaUrl } from "../config/api";
+
 
 export default function Home() {
   const navigate = useNavigate();
@@ -38,13 +44,21 @@ export default function Home() {
 
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  useEffect(() => {
-    fetch(apiPath("/api/products"))
-      .then((res) => res.json())
-      .then((data) => setAllProducts(data))
-      .catch((err) => console.error(err));
-  }, []);
+ useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("https://lisa-clo-backup.onrender.com/api/products");
+      const data = await res.json();
 
+      setAllProducts(Array.isArray(data) ? data : data.products || []); 
+    } catch (err) {
+      console.error(err);
+      setAllProducts([]);  // fallback to empty array on error
+    }
+  };
+
+  fetchProducts();
+}, []);
   const filteredProducts = useMemo(() => {
     if (searchQuery.trim() === "") return [];
     const q = searchQuery.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -54,6 +68,15 @@ export default function Home() {
   }, [searchQuery, allProducts]);
 
   const slides = [slideOne, slideTwo, slideThree,slideFour];
+
+  const menRepeatedImages = [
+  menImageOne,
+  menImageTwo,
+  menImageThree,
+  menImageFour,
+  menImageFive,
+  menImageTwo, 
+];
   
   const womenRepeatedImages = [
     womenImageOne,
@@ -103,9 +126,9 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-const menProducts = allProducts.filter((p) => p.category === "men");
-const womenProducts = allProducts.filter((p) => p.category === "women");
-const genzProducts = allProducts.filter((p) => p.category === "genz");
+const menProducts = allProducts.filter((p) => p.category && p.category.trim().toLowerCase() === "men");
+const womenProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "women");
+const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "genz");
 
   return (
     <div className="page">
@@ -233,31 +256,40 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
             >
               <FaChevronLeft />
             </button>
-    <div id="men-collection" className="collection-row">
-  {menProducts && menProducts.length > 0 ? (
-    menProducts.map((product) => (
-      <article
-  className="collection-card"
-  key={product._id}
-  onClick={() =>
- navigate(`/category/men/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`)
-}
-  style={{ cursor: "pointer" }}
->
-        <div className="image-wrapper">
-          <img
-            className="collection-image"
-            src={resolveMediaUrl()}
-            alt={product.name}
-          />
-        </div>
-        <p className="product-name">{product.name}</p>
-      </article>
-    ))
-  ) : (
-    <p style={{ padding: "20px" }}>Loading...</p>
-  )}
-</div>
+  
+
+     <div id="men-collection" className="collection-row">
+            {menProducts.length > 0 ? (
+              menProducts.map((product) => (
+                <article
+                  className="collection-card"
+                  key={product._id}
+                  onClick={() =>
+                    navigate(
+                      `/category/men/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`
+                    )
+                  }
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="image-wrapper">
+                    <img
+                      className="collection-image"
+                    src={resolveMediaUrl(product.image)}
+                      alt={product.name}
+                    />
+                  </div>
+                  <p className="product-name">{product.name}</p>
+                </article>
+              ))
+            ) : (
+              menRepeatedImages.map((image, index) => (
+                <article className="collection-card" key={`men-${index}`}>
+                  <img src={image} alt={`Men collection ${index + 1}`} />
+                </article>
+              ))
+            )}
+            </div> 
+      
             <button
               className="collection-arrow right"
               type="button"

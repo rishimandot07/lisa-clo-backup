@@ -146,9 +146,7 @@ const addToCart = (product) => {
   cart.push({
   _id: product._id,
   name: product.name,
-  image: product.image.startsWith("http")
-  ? product.image
-  : `${import.meta.env.VITE_API_URL}${product.image.startsWith("/") ? "" : "/"}${product.image}`,
+  image: product.image,
   price: product.price,
   quantity: 1
 });
