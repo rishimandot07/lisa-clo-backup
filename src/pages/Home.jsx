@@ -41,32 +41,26 @@ export default function Home() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [allProducts, setAllProducts] = useState([]);
+  const menProducts = Array.isArray(allProducts)
+    ? allProducts.filter((p) => p.category ==="men")
+    : [];
 
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
  useEffect(() => {
-  const loadData = async () => {
+  const fetchProducts = async () => {
     try {
-      
-      await fetch("https://lisa-clo-backup.onrender.com/");
-      console.log("Backend awakened");
-
-      
       const res = await fetch("https://lisa-clo-backup.onrender.com/api/products");
       const data = await res.json();
 
-      console.log("API DATA:", data);
-
-      setAllProducts(Array.isArray(data) ? data : []);
+      setAllProducts(data); // IMPORTANT: no conditions
     } catch (err) {
-      console.error("FETCH ERROR:", err);
-      setAllProducts([]);
+      console.error(err);
     }
   };
 
-  loadData();
+  fetchProducts();
 }, []);
-
   const filteredProducts = useMemo(() => {
     if (searchQuery.trim() === "") return [];
     const q = searchQuery.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -134,9 +128,6 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  const menProducts = allProducts.filter(
-  (p) => p.category && p.category.toLowerCase() === "men"
-);
 const womenProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "women");
 const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "genz");
 
@@ -296,14 +287,9 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
         <div className="image-wrapper">
          <img
   className="collection-image"
-  src={
-    product?.image
-      ? product.image.startsWith("http")
-        ? product.image
-        : `https://lisa-clo-backup.onrender.com${product.image}`
-      : "https://via.placeholder.com/300"
-  }
+  src={product.image}
   alt={product.name}
+   
 />
         </div>
         <p className="product-name">{product.name}</p>
