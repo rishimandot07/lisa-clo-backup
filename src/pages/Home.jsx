@@ -41,9 +41,6 @@ export default function Home() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [allProducts, setAllProducts] = useState([]);
-  const menProducts = Array.isArray(allProducts)
-    ? allProducts.filter((p) => p.category ==="men")
-    : [];
 
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -53,9 +50,10 @@ export default function Home() {
       const res = await fetch("https://lisa-clo-backup.onrender.com/api/products");
       const data = await res.json();
 
-      setAllProducts(data); // IMPORTANT: no conditions
+      setAllProducts(Array.isArray(data) ? data : data.products || []);  // IMPORTANT: no conditions
     } catch (err) {
       console.error(err);
+      setAllProducts([]);  // fallback to empty array on error
     }
   };
 
@@ -127,7 +125,7 @@ export default function Home() {
 
     return () => clearInterval(timer);
   }, [slides.length]);
-
+const menProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "men");
 const womenProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "women");
 const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "genz");
 
@@ -258,45 +256,37 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
               <FaChevronLeft />
             </button>
   
-
-      <div id="men-collection" className="collection-row">
-
-        {console.log("MEN PRODUCTS:", menProducts)}
-  {menProducts.map((product) => {
-    const imageUrl =
-      product && product.image
-        ? product.image.startsWith("http")
-          ? product.image
-          : `https://lisa-clo-backup.onrender.com${product.image}`
-        : null;
-
-    return (
-      <article
-        className="collection-card"
-        key={product._id|| Math.random()}
-        
-        onClick={() =>
-          navigate(
-            `/category/men/${product.name
-              .toLowerCase()
-              .replace(/[^a-z0-9]/g, "")}`
-          )
-        }
-        style={{ cursor: "pointer" }}
-      >
-        <div className="image-wrapper">
-         <img
-  className="collection-image"
-  src={product.image}
-  alt={product.name}
-   
-/>
-        </div>
-        <p className="product-name">{product.name}</p>
-      </article>
-    );
-  })}
+<div id="men-collection" className="collection-row">
+  {menProducts.map((product) => (
+    <article
+      className="collection-card"
+      key={product._id}
+      onClick={() =>
+        navigate(
+          `/category/men/${product.name
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "")}`
+        )
+      }
+      style={{ cursor: "pointer" }}
+    >
+      <div className="image-wrapper">
+        <img
+          className="collection-image"
+          src={
+            product?.image?.startsWith("http")
+              ? product.image
+              : `https://lisa-clo-backup.onrender.com${product.image}`
+          }
+          alt={product.name}
+        />
+      </div>
+      <p className="product-name">{product.name}</p>
+    </article>
+  ))}
 </div>
+      
+      
             <button
               className="collection-arrow right"
               type="button"
